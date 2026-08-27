@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Property, FilterState } from './types';
-import { MOCK_PROPERTIES } from './data/mockProperties';
+import { MOCK_PROPERTIES, getDecoratedPropertiesForSchool } from './data/mockProperties';
 import { ListingsView } from './components/ListingsView';
 import { PropertyDetailView } from './components/PropertyDetailView';
 import { MapView } from './components/MapView';
@@ -42,6 +42,11 @@ export default function App() {
     tenureType: 'All',
   });
 
+  // Dynamically decorate properties with distance to currently selected school
+  const currentProperties = useMemo(() => {
+    return getDecoratedPropertiesForSchool(filters.selectedSchool, MOCK_PROPERTIES);
+  }, [filters.selectedSchool]);
+
   const handleToggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setFavorites((prev) =>
@@ -67,7 +72,9 @@ export default function App() {
   };
 
   const handleSelectProperty = (property: Property) => {
-    setSelectedProperty(property);
+    // If the selected property is from the decorated list, make sure we use it
+    const activeDecorated = currentProperties.find((p) => p.id === property.id) || property;
+    setSelectedProperty(activeDecorated);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -96,7 +103,7 @@ export default function App() {
           {/* Otherwise render the active tab */}
           {activeTab === 'listings' && (
             <ListingsView
-              properties={MOCK_PROPERTIES}
+              properties={currentProperties}
               favorites={favorites}
               onToggleFavorite={handleToggleFavorite}
               onSelectProperty={handleSelectProperty}
@@ -109,15 +116,17 @@ export default function App() {
 
           {activeTab === 'search' && (
             <MapView
-              properties={MOCK_PROPERTIES}
+              properties={currentProperties}
               onSelectProperty={handleSelectProperty}
+              selectedSchool={filters.selectedSchool}
+              onSelectSchool={(schoolName) => handleUpdateFilters({ selectedSchool: schoolName })}
             />
           )}
 
           {activeTab === 'favorites' && (
             <FavoritesView
               favorites={favorites}
-              allProperties={MOCK_PROPERTIES}
+              allProperties={currentProperties}
               onToggleFavorite={handleToggleFavorite}
               onSelectProperty={handleSelectProperty}
               onNavigateToBrowse={() => setActiveTab('listings')}

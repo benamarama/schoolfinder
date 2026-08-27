@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { FilterState } from '../types';
-import { MOCK_SCHOOLS } from '../data/mockProperties';
-import { X, SlidersHorizontal, RotateCcw, Check } from 'lucide-react';
+import { ALL_SINGAPORE_PRIMARY_SCHOOLS, SingaporeSchool } from '../data/singaporeSchools';
+import { X, SlidersHorizontal, RotateCcw, Check, Search, GraduationCap, Sparkles } from 'lucide-react';
 
 interface FilterModalProps {
   isOpen: boolean;
@@ -20,16 +20,35 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   onResetFilters,
   totalResults,
 }) => {
+  const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+  const [selectedZone, setSelectedZone] = useState<string>('All');
+
+  const filteredSchools = useMemo(() => {
+    return ALL_SINGAPORE_PRIMARY_SCHOOLS.filter((school) => {
+      const matchesQuery =
+        schoolSearchQuery.trim() === '' ||
+        school.name.toLowerCase().includes(schoolSearchQuery.toLowerCase()) ||
+        school.area.toLowerCase().includes(schoolSearchQuery.toLowerCase()) ||
+        school.postalCode.includes(schoolSearchQuery);
+
+      const matchesZone = selectedZone === 'All' || school.zone === selectedZone;
+
+      return matchesQuery && matchesZone;
+    });
+  }, [schoolSearchQuery, selectedZone]);
+
   if (!isOpen) return null;
+
+  const zones = ['All', 'Central', 'North', 'South', 'East', 'West', 'North-East'];
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white w-full md:max-w-lg rounded-t-3xl md:rounded-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 text-left">
+      <div className="bg-white w-full md:max-w-xl rounded-t-3xl md:rounded-2xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 text-left">
         {/* Header */}
         <div className="p-4 bg-slate-50 text-slate-900 flex justify-between items-center shrink-0 border-b border-slate-200">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-5 h-5 text-[#0284C7]" />
-            <h3 className="serif font-bold text-base text-slate-900">Search & Proximity Filters</h3>
+            <h3 className="serif font-bold text-base text-slate-900">Search & School Radius Filters</h3>
           </div>
           <button
             onClick={onClose}
@@ -41,22 +60,106 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 
         {/* Filter Body */}
         <div className="p-5 overflow-y-auto space-y-5 flex-1 text-xs md:text-sm text-slate-700">
-          {/* Target Primary School */}
-          <div>
-            <label className="block font-semibold text-slate-800 mb-1.5 uppercase tracking-wider text-[11px]">
-              Primary School Anchor
-            </label>
-            <select
-              value={filters.selectedSchool}
-              onChange={(e) => onUpdateFilters({ selectedSchool: e.target.value })}
-              className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:border-[#0284C7]"
-            >
-              {MOCK_SCHOOLS.map((school) => (
-                <option key={school} value={school} className="bg-white text-slate-900">
-                  {school}
-                </option>
+          {/* Target Primary School with Instant Search */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="block font-semibold text-slate-800 uppercase tracking-wider text-[11px]">
+                Target Primary School ({ALL_SINGAPORE_PRIMARY_SCHOOLS.length} MOE Schools)
+              </label>
+              <span className="text-[10px] text-[#0284C7] font-semibold flex items-center gap-1">
+                <GraduationCap className="w-3.5 h-3.5" />
+                Singapore Wide
+              </span>
+            </div>
+
+            {/* Currently Selected Banner */}
+            <div className="p-2.5 bg-sky-50 rounded-xl border border-sky-200 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] text-sky-600 font-bold uppercase tracking-wider">Active School Anchor</span>
+                <p className="font-bold text-slate-900 text-xs md:text-sm">{filters.selectedSchool}</p>
+              </div>
+              <span className="bg-[#0284C7] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                Selected
+              </span>
+            </div>
+
+            {/* School Search Input */}
+            <div className="relative">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={schoolSearchQuery}
+                onChange={(e) => setSchoolSearchQuery(e.target.value)}
+                placeholder="Search any school (e.g. Rosyth, Tao Nan, Nanyang, Sengkang, Raffles...)"
+                className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs md:text-sm text-slate-900 focus:outline-none focus:border-[#0284C7] focus:bg-white"
+              />
+              {schoolSearchQuery && (
+                <button
+                  onClick={() => setSchoolSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Zone Filter Chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+              {zones.map((zone) => (
+                <button
+                  key={zone}
+                  type="button"
+                  onClick={() => setSelectedZone(zone)}
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all border ${
+                    selectedZone === zone
+                      ? 'bg-[#0F172A] text-white border-[#0F172A]'
+                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                  }`}
+                >
+                  {zone}
+                </button>
               ))}
-            </select>
+            </div>
+
+            {/* School List Picker Box */}
+            <div className="max-h-44 overflow-y-auto rounded-xl border border-slate-200 divide-y divide-slate-100 bg-slate-50/50">
+              {filteredSchools.length > 0 ? (
+                filteredSchools.map((school) => {
+                  const isSelected = filters.selectedSchool === school.name;
+                  return (
+                    <button
+                      key={school.name}
+                      type="button"
+                      onClick={() => onUpdateFilters({ selectedSchool: school.name })}
+                      className={`w-full p-2.5 text-left flex items-center justify-between text-xs transition-colors ${
+                        isSelected
+                          ? 'bg-sky-100/70 text-slate-900 font-bold'
+                          : 'hover:bg-slate-100/80 text-slate-700'
+                      }`}
+                    >
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold">{school.name}</span>
+                          {school.isPopularGep && (
+                            <span className="bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.2 rounded font-bold">
+                              GEP
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-slate-400">
+                          {school.area} • {school.zone} Zone • S({school.postalCode})
+                        </span>
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-[#0284C7] shrink-0" />}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="p-4 text-center text-xs text-slate-400">
+                  No schools found matching &quot;{schoolSearchQuery}&quot;
+                </div>
+              )}
+            </div>
           </div>
 
           {/* School Distance Radius */}

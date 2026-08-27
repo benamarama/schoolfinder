@@ -124,6 +124,8 @@ export async function revGeocodeOneMap(
   }
 }
 
+export type OneMapRouteResult = OneMapRouteResponse;
+
 /**
  * Calculates routing via OneMap public routing service
  */
@@ -152,4 +154,14 @@ export async function calculateOneMapRoute(
     console.warn('Failed to call OneMap route endpoint:', e);
     return null;
   }
+}
+
+export async function getOneMapRoute(
+  start: string,
+  end: string,
+  routeType: 'walk' | 'drive' | 'cycle' | 'pt' = 'walk'
+): Promise<OneMapRouteResponse | null> {
+  const [startLat, startLng] = start.split(',');
+  const [endLat, endLng] = end.split(',');
+  return calculateOneMapRoute(startLat, startLng, endLat, endLng, routeType);
 }

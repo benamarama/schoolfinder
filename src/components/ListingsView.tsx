@@ -11,6 +11,8 @@ import {
   Bell,
   User,
   Search as SearchIcon,
+  Activity,
+  ShieldCheck,
 } from 'lucide-react';
 import { PROPRADIUS_LOGO_URL } from '../data/mockProperties';
 
@@ -39,7 +41,7 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
   const [isProximityDropdownOpen, setIsProximityDropdownOpen] = useState(false);
   const [isBedroomsDropdownOpen, setIsBedroomsDropdownOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   // Filter properties logic
   const filteredProperties = properties.filter((prop) => {
@@ -97,14 +99,12 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <button
-              id="notifications-btn"
-              onClick={() => alert("Notification: New listing alert! Blk 92 Dawson Rd just published at $1,020 PSF.")}
-              className="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-[#0F172A] transition-colors rounded-full hover:bg-slate-100 border border-transparent hover:border-slate-200"
-              title="Notifications"
-            >
-              <Bell className="w-5 h-5" />
-            </button>
+            {/* Live Gov API indicator */}
+            <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full text-[11px] font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>URA & SLA OneMap Active</span>
+            </div>
+
             <button
               id="profile-btn"
               onClick={() => onNavigateTab('profile')}
@@ -131,9 +131,10 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
             </div>
             <button
               onClick={() => setIsFilterModalOpen(true)}
-              className="text-[11px] uppercase tracking-widest text-[#0284C7] hover:text-[#0369A1] font-semibold transition-colors flex items-center gap-1"
+              className="text-[11px] uppercase tracking-widest text-[#0284C7] hover:text-[#0369A1] font-semibold transition-colors flex items-center gap-1 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200"
             >
-              Change Anchor
+              <SearchIcon className="w-3 h-3" />
+              Switch School (185+)
             </button>
           </div>
 
@@ -264,80 +265,83 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
               )}
             </div>
 
-            {/* Filter Dialog Modal trigger */}
+            {/* Tenure Pill Toggle */}
+            <button
+              onClick={() =>
+                onUpdateFilters({
+                  tenureType: filters.tenureType === 'Freehold' ? 'All' : 'Freehold',
+                })
+              }
+              className={`shrink-0 px-3.5 py-1.5 rounded-full border text-xs font-medium transition-all shadow-sm ${
+                filters.tenureType === 'Freehold'
+                  ? 'bg-[#0F172A] text-white border-[#0F172A] font-bold'
+                  : 'bg-white text-slate-700 border-slate-200 hover:text-[#0F172A]'
+              }`}
+            >
+              Freehold Only
+            </button>
+
+            {/* Full Filters Button */}
             <button
               id="open-filters-modal-btn"
               onClick={() => setIsFilterModalOpen(true)}
               className="shrink-0 bg-white px-3.5 py-1.5 rounded-full flex items-center gap-1.5 border border-slate-200 text-xs font-medium text-slate-700 hover:text-[#0F172A] hover:border-slate-300 transition-colors shadow-sm"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
-              <span>Filters</span>
+              <span>All Filters</span>
             </button>
-
-            {/* Budget Pill */}
-            <button
-              id="budget-pill-btn"
-              onClick={() => setIsFilterModalOpen(true)}
-              className="shrink-0 bg-white px-3.5 py-1.5 rounded-full flex items-center gap-1.5 border border-slate-200 text-xs font-medium text-slate-700 hover:text-[#0F172A] hover:border-slate-300 transition-colors shadow-sm"
-            >
-              <span>Budget</span>
-              <CircleDollarSign className="w-3.5 h-3.5 text-slate-500" />
-            </button>
-          </div>
-
-          {/* Results Count */}
-          <div className="flex justify-between items-center mt-2.5">
-            <span className="text-[11px] uppercase tracking-widest text-slate-500">
-              Showing <strong className="text-[#0F172A] font-semibold">{sortedProperties.length}</strong> verified properties
-            </span>
-            {(filters.propertyType !== 'All' || filters.proximity !== 'Within 1km' || filters.bedrooms !== 'All' || filters.tenureType !== 'All') && (
-              <button
-                onClick={onResetFilters}
-                className="text-[11px] uppercase tracking-widest text-[#0284C7] hover:text-[#0369A1] transition-colors font-semibold"
-              >
-                Reset filters
-              </button>
-            )}
           </div>
         </div>
 
         {/* Listings Grid */}
-        <div className="px-4 pt-4 flex flex-col gap-4">
-          {displayedProperties.length === 0 ? (
-            <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-              <SearchIcon className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h3 className="serif text-xl font-bold text-slate-900 italic">No Matching Properties Found</h3>
-              <p className="text-xs text-slate-500 max-w-xs mx-auto mt-2 mb-6 leading-relaxed">
-                Try widening your distance radius to 2km or adjusting the bedroom and price filters.
-              </p>
-              <button
-                onClick={onResetFilters}
-                className="px-5 py-2.5 bg-[#0F172A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors shadow-sm"
-              >
-                Reset All Filters
-              </button>
+        <div className="p-4">
+          {displayedProperties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedProperties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  isFavorite={favorites.includes(property.id)}
+                  onToggleFavorite={onToggleFavorite}
+                  onClick={() => onSelectProperty(property)}
+                />
+              ))}
             </div>
           ) : (
-            displayedProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                isFavorite={favorites.includes(property.id)}
-                onToggleFavorite={onToggleFavorite}
-                onSelect={onSelectProperty}
-              />
-            ))
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm max-w-lg mx-auto mt-6">
+              <School className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+              <h3 className="serif font-bold text-lg text-slate-800">No properties matched this filter</h3>
+              <p className="text-xs text-slate-500 mt-1 mb-5 leading-relaxed">
+                Try widening your distance radius to 2km or search for other primary schools across Singapore.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={() => onUpdateFilters({ proximity: 'All' })}
+                  className="px-4 py-2 bg-sky-50 border border-sky-200 text-[#0284C7] rounded-xl text-xs font-bold"
+                >
+                  Expand to All Radii
+                </button>
+                <button
+                  onClick={onResetFilters}
+                  className="px-4 py-2 bg-[#0F172A] text-white rounded-xl text-xs font-bold"
+                >
+                  Reset All Filters
+                </button>
+              </div>
+            </div>
           )}
 
           {/* Load More Button */}
-          {visibleCount < sortedProperties.length && (
-            <button
-              id="load-more-btn"
-              onClick={() => setVisibleCount((prev) => prev + 3)}
-              className="w-full py-3.5 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold text-xs md:text-sm hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm mt-2 uppercase tracking-widest"
-            >
-              Load More Properties ({sortedProperties.length - visibleCount} remaining)
-            </button>
+          {sortedProperties.length > visibleCount && (
+            <div className="mt-8 text-center">
+              <button
+                id="load-more-btn"
+                onClick={() => setVisibleCount((prev) => prev + 3)}
+                className="px-6 py-2.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-full border border-slate-200 shadow-sm transition-colors uppercase tracking-wider"
+              >
+                Load More Properties ({sortedProperties.length - visibleCount} Remaining)
+              </button>
+            </div>
           )}
         </div>
       </main>
@@ -349,7 +353,7 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
         filters={filters}
         onUpdateFilters={onUpdateFilters}
         onResetFilters={onResetFilters}
-        totalResults={sortedProperties.length}
+        totalResults={filteredProperties.length}
       />
     </div>
   );

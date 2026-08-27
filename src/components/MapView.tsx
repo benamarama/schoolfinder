@@ -1,24 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Property } from '../types';
-import { MapPin, School, Navigation, Layers, Check, Sparkles, Bed, Bath, ArrowRight } from 'lucide-react';
-import { MOCK_SCHOOLS } from '../data/mockProperties';
+import { MapPin, School, Navigation, Layers, Check, Sparkles, Bed, Bath, ArrowRight, Search, GraduationCap } from 'lucide-react';
+import { ALL_SINGAPORE_PRIMARY_SCHOOLS, getSchoolByName } from '../data/singaporeSchools';
 
 interface MapViewProps {
   properties: Property[];
   onSelectProperty: (property: Property) => void;
+  selectedSchool?: string;
+  onSelectSchool?: (schoolName: string) => void;
 }
 
-export const MapView: React.FC<MapViewProps> = ({ properties, onSelectProperty }) => {
-  const [selectedSchool, setSelectedSchool] = useState('Rosyth School');
+export const MapView: React.FC<MapViewProps> = ({
+  properties,
+  onSelectProperty,
+  selectedSchool: initialSchool = 'Rosyth School',
+  onSelectSchool,
+}) => {
+  const [selectedSchool, setSelectedSchool] = useState(initialSchool);
+  const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+  const [isSchoolPickerOpen, setIsSchoolPickerOpen] = useState(false);
   const [activePropertyId, setActivePropertyId] = useState<string>(properties[0]?.id || '');
   const [radiusKm, setRadiusKm] = useState<1 | 2>(1);
+
+  const activeSchool = useMemo(() => {
+    return getSchoolByName(selectedSchool) || ALL_SINGAPORE_PRIMARY_SCHOOLS[0];
+  }, [selectedSchool]);
+
+  const filteredSchoolOptions = useMemo(() => {
+    if (!schoolSearchQuery.trim()) return ALL_SINGAPORE_PRIMARY_SCHOOLS.slice(0, 30);
+    const q = schoolSearchQuery.toLowerCase();
+    return ALL_SINGAPORE_PRIMARY_SCHOOLS.filter(
+      (s) =>
+        s.name.toLowerCase().includes(q) ||
+        s.area.toLowerCase().includes(q) ||
+        s.zone.toLowerCase().includes(q)
+    );
+  }, [schoolSearchQuery]);
+
+  const handleSchoolChange = (schoolName: string) => {
+    setSelectedSchool(schoolName);
+    setIsSchoolPickerOpen(false);
+    setSchoolSearchQuery('');
+    if (onSelectSchool) {
+      onSelectSchool(schoolName);
+    }
+  };
 
   const activeProperty = properties.find((p) => p.id === activePropertyId) || properties[0];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-16 pb-24 max-w-[1200px] mx-auto px-4">
       {/* Top Search / Radius Bar */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-4 text-left">
+      <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-4 text-left relative z-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 text-[#0284C7]">
@@ -29,19 +62,61 @@ export const MapView: React.FC<MapViewProps> = ({ properties, onSelectProperty }
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
-              <School className="w-4 h-4 text-[#0284C7]" />
-              <select
-                value={selectedSchool}
-                onChange={(e) => setSelectedSchool(e.target.value)}
-                className="bg-transparent font-semibold text-slate-900 focus:outline-none cursor-pointer"
+            {/* School Selector Dropdown / Search Trigger */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsSchoolPickerOpen(!isSchoolPickerOpen)}
+                className="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 transition-colors"
               >
-                {MOCK_SCHOOLS.map((s) => (
-                  <option key={s} value={s} className="bg-white text-slate-900">{s}</option>
-                ))}
-              </select>
+                <School className="w-4 h-4 text-[#0284C7]" />
+                <span className="max-w-[200px] truncate">{selectedSchool}</span>
+                <span className="text-[10px] text-slate-400">▼</span>
+              </button>
+
+              {/* School Picker Popover */}
+              {isSchoolPickerOpen && (
+                <div className="absolute top-full mt-1 right-0 md:left-0 w-80 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 z-50 text-left animate-fadeIn">
+                  <div className="relative mb-2">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={schoolSearchQuery}
+                      onChange={(e) => setSchoolSearchQuery(e.target.value)}
+                      placeholder="Search any primary school..."
+                      className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-[#0284C7]"
+                      autoFocus
+                    />
+                  </div>
+
+                  <div className="max-h-56 overflow-y-auto divide-y divide-slate-100">
+                    {filteredSchoolOptions.map((s) => (
+                      <button
+                        key={s.name}
+                        onClick={() => handleSchoolChange(s.name)}
+                        className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition-colors ${
+                          selectedSchool === s.name
+                            ? 'bg-sky-50 text-[#0284C7] font-bold'
+                            : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <div>
+                          <p className="font-semibold">{s.name}</p>
+                          <p className="text-[10px] text-slate-400">{s.area} • {s.zone} Zone</p>
+                        </div>
+                        {s.isPopularGep && (
+                          <span className="bg-amber-100 text-amber-800 text-[9px] px-1 py-0.2 rounded font-bold">
+                            GEP
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
+            {/* Radius Switcher */}
             <div className="flex bg-slate-100 p-1 rounded-xl text-xs border border-slate-200">
               <button
                 onClick={() => setRadiusKm(1)}
@@ -49,7 +124,7 @@ export const MapView: React.FC<MapViewProps> = ({ properties, onSelectProperty }
                   radiusKm === 1 ? 'bg-[#0F172A] text-white font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                1 km Boundary
+                1 km Priority
               </button>
               <button
                 onClick={() => setRadiusKm(2)}
@@ -57,15 +132,26 @@ export const MapView: React.FC<MapViewProps> = ({ properties, onSelectProperty }
                   radiusKm === 2 ? 'bg-[#0F172A] text-white font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                2 km Radius
+                2 km Zone
               </button>
             </div>
           </div>
         </div>
+
+        {/* Active School Badge details */}
+        <div className="mt-2 pt-2 border-t border-slate-100 flex items-center gap-3 text-[11px] text-slate-500">
+          <span>Target: <strong className="text-slate-800">{activeSchool.name}</strong></span>
+          <span>•</span>
+          <span>Area: <strong className="text-slate-800">{activeSchool.area}</strong></span>
+          <span>•</span>
+          <span>Postal: <strong className="text-slate-800">S({activeSchool.postalCode})</strong></span>
+          <span>•</span>
+          <span>GPS: <strong className="font-mono text-slate-700">{activeSchool.lat.toFixed(4)}, {activeSchool.lng.toFixed(4)}</strong></span>
+        </div>
       </div>
 
       {/* Interactive Map Visualizer Canvas */}
-      <div className="relative w-full h-[380px] md:h-[450px] bg-slate-100 rounded-2xl overflow-hidden shadow-sm border border-slate-200 mb-4">
+      <div className="relative w-full h-[380px] md:h-[450px] bg-slate-100 rounded-2xl overflow-hidden shadow-sm border border-slate-200 mb-4 z-10">
         {/* Background Map Graphic */}
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwPdu8jIDLC14PneG-cKG5I_5WQguwWjl-6U0x1I_0upcv1LqR-irdCFxizJ-0IwuSgnMSSsmpVQAHLRowHCB89N6V-gr2OfxqyS_P9GVKpQViVPv5IZjh19spnckaDmFeAyf6o4mdN3OBBWDxbMTe8QBuMyaDA779BkUjZxWlpkVPCqlW0QPNhZoF4ZwxJ4467cTUyPiF45W1KOthQgM9WSq3InPW0WOjnQEVnQnS0eyEL54Jy4Y"
@@ -104,6 +190,8 @@ export const MapView: React.FC<MapViewProps> = ({ properties, onSelectProperty }
             { top: '40%', left: '68%' },
             { top: '60%', left: '35%' },
             { top: '25%', left: '55%' },
+            { top: '70%', left: '42%' },
+            { top: '30%', left: '65%' },
           ];
           const pos = positions[idx % positions.length];
 
