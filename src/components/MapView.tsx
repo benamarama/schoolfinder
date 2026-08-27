@@ -17,6 +17,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { ALL_SINGAPORE_PRIMARY_SCHOOLS, getSchoolByName } from '../data/singaporeSchools';
+import { GoogleMapsAndSearchIntel } from './GoogleMapsAndSearchIntel';
 
 interface MapViewProps {
   properties: Property[];
@@ -502,6 +503,20 @@ export const MapView: React.FC<MapViewProps> = ({
           No verified properties in this immediate radius. Switch to 2 km Zone above to explore.
         </div>
       )}
+
+      {/* Live Google Maps & Search Grounding Intelligence Section */}
+      <div className="mt-6">
+        <GoogleMapsAndSearchIntel
+          schoolName={selectedSchool}
+          propertyTitle={activeProperty?.title || `${selectedSchool} Vicinity`}
+          propertyAddress={activeProperty?.subtitle || `${activeSchool.area}, Singapore ${activeSchool.postalCode}`}
+          coordinates={{
+            lat: activeProperty?.coordinates.lat || activeSchool.lat,
+            lng: activeProperty?.coordinates.lng || activeSchool.lng,
+          }}
+          district={activeSchool.area || 'Singapore'}
+        />
+      </div>
     </div>
   );
 };

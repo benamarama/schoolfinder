@@ -7,6 +7,7 @@ import { ShareModal } from './ShareModal';
 import { getSchoolByName } from '../data/singaporeSchools';
 import { getOneMapRoute, OneMapRouteResult } from '../services/onemapService';
 import { getUraResidentialTransactions, getUraCarparks, UraTransactionItem, UraCarparkItem } from '../services/uraService';
+import { GoogleMapsAndSearchIntel } from './GoogleMapsAndSearchIntel';
 import {
   ArrowLeft,
   Share2,
@@ -497,6 +498,20 @@ export const PropertyDetailView: React.FC<PropertyDetailViewProps> = ({
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Gemini Live Google Maps & Search Grounding Section */}
+          <div className="pt-6">
+            <GoogleMapsAndSearchIntel
+              schoolName={primarySchoolName}
+              propertyTitle={property.title}
+              propertyAddress={property.subtitle}
+              coordinates={{
+                lat: property.coordinates.lat,
+                lng: property.coordinates.lng,
+              }}
+              district={property.hdbTown || 'Singapore'}
+            />
           </div>
 
           {/* Proximity to Schools Section */}

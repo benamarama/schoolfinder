@@ -15,6 +15,9 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { PROPRADIUS_LOGO_URL } from '../data/mockProperties';
+import { getSchoolByName, ALL_SINGAPORE_PRIMARY_SCHOOLS } from '../data/singaporeSchools';
+import { GoogleMapsAndSearchIntel } from './GoogleMapsAndSearchIntel';
+import { Sparkles, MapPin } from 'lucide-react';
 
 interface ListingsViewProps {
   properties: Property[];
@@ -42,6 +45,9 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
   const [isProximityDropdownOpen, setIsProximityDropdownOpen] = useState(false);
   const [isBedroomsDropdownOpen, setIsBedroomsDropdownOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
+  const [showSchoolIntel, setShowSchoolIntel] = useState(false);
+
+  const currentSchoolData = getSchoolByName(filters.selectedSchool) || ALL_SINGAPORE_PRIMARY_SCHOOLS[0];
 
   // Filter properties logic
   const filteredProperties = properties.filter((prop) => {
@@ -291,6 +297,55 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
               <span>All Filters</span>
             </button>
           </div>
+        </div>
+
+        {/* Live Google Maps & Search Grounding Quick Access Banner */}
+        <div className="px-4 pt-3">
+          <div className="bg-gradient-to-r from-sky-900 via-slate-900 to-sky-950 text-white rounded-2xl p-3.5 md:p-4 shadow-sm border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 text-left">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-sky-300" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">
+                    Google Maps & Search Intelligence
+                  </span>
+                  <span className="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-1.5 py-0.2 rounded font-semibold">
+                    Live Grounded
+                  </span>
+                </div>
+                <h3 className="serif font-bold text-sm md:text-base text-white">
+                  Live Catchment Intel for {filters.selectedSchool}
+                </h3>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowSchoolIntel(!showSchoolIntel)}
+              className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm self-start md:self-auto"
+            >
+              <MapPin className="w-3.5 h-3.5 text-sky-200" />
+              <span>{showSchoolIntel ? 'Hide Intel' : 'Explore Maps & P1 Data'}</span>
+            </button>
+          </div>
+
+          {/* Expandable Google Grounding Intelligence */}
+          {showSchoolIntel && (
+            <div className="mt-3 animate-fadeIn">
+              <GoogleMapsAndSearchIntel
+                schoolName={filters.selectedSchool}
+                propertyTitle={`Properties near ${filters.selectedSchool}`}
+                propertyAddress={`${currentSchoolData.area}, Singapore ${currentSchoolData.postalCode}`}
+                coordinates={{
+                  lat: currentSchoolData.lat,
+                  lng: currentSchoolData.lng,
+                }}
+                district={currentSchoolData.area || 'Singapore'}
+              />
+            </div>
+          )}
         </div>
 
         {/* Listings Grid */}
