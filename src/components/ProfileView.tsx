@@ -85,7 +85,7 @@ export const ProfileView: React.FC = () => {
   }).slice(0, 10);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-16 pb-28 max-w-[1200px] mx-auto px-4 text-left">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-4 pb-28 max-w-[1280px] mx-auto px-4 sm:px-6 text-left">
       {/* Profile Header */}
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">

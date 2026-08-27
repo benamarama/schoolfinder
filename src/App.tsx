@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Property, FilterState } from './types';
 import { MOCK_PROPERTIES, getDecoratedPropertiesForSchool } from './data/mockProperties';
+import { Header } from './components/Header';
 import { ListingsView } from './components/ListingsView';
 import { PropertyDetailView } from './components/PropertyDetailView';
 import { MapView } from './components/MapView';
 import { FavoritesView } from './components/FavoritesView';
 import { ProfileView } from './components/ProfileView';
 import { BottomNav } from './components/BottomNav';
+import { FilterModal } from './components/FilterModal';
 
 export default function App() {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [activeTab, setActiveTab] = useState<'search' | 'listings' | 'favorites' | 'profile'>('listings');
+  const [isSchoolModalOpen, setIsSchoolModalOpen] = useState(false);
   
   // Persistent Favorites
   const [favorites, setFavorites] = useState<string[]>(() => {
@@ -100,6 +103,15 @@ export default function App() {
         />
       ) : (
         <>
+          {/* Global Top Site Header: Prop Radius */}
+          <Header
+            activeTab={activeTab}
+            onSelectTab={handleSelectTab}
+            selectedSchool={filters.selectedSchool}
+            favoritesCount={favorites.length}
+            onOpenSchoolFilter={() => setIsSchoolModalOpen(true)}
+          />
+
           {/* Otherwise render the active tab */}
           {activeTab === 'listings' && (
             <ListingsView
@@ -134,6 +146,16 @@ export default function App() {
           )}
 
           {activeTab === 'profile' && <ProfileView />}
+
+          {/* School Selector Modal when triggered from Header */}
+          <FilterModal
+            isOpen={isSchoolModalOpen}
+            onClose={() => setIsSchoolModalOpen(false)}
+            filters={filters}
+            onUpdateFilters={handleUpdateFilters}
+            onResetFilters={handleResetFilters}
+            totalMatches={currentProperties.length}
+          />
 
           {/* Bottom Nav Bar */}
           <BottomNav

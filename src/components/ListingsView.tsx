@@ -88,45 +88,10 @@ export const ListingsView: React.FC<ListingsViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col">
-      {/* Top App Bar with PropRadius Logo */}
-      <header className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl pt-safe shadow-[0_1px_4px_rgba(0,0,0,0.05)] border-b border-slate-200/80">
-        <div className="h-16 flex items-center justify-between px-4 max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-3">
-            <img
-              alt="PropRadius Logo"
-              className="h-8 w-auto object-contain"
-              src={PROPRADIUS_LOGO_URL}
-              referrerPolicy="no-referrer"
-            />
-            <div className="h-4 w-px bg-slate-200 hidden sm:block"></div>
-            <span className="serif italic text-lg md:text-xl text-[#0F172A] tracking-tight">
-              Listings<span className="text-[#0284C7]">.</span>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2.5">
-            {/* Live Gov API indicator */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-2.5 py-1 rounded-full text-[11px] font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>URA & SLA OneMap Active</span>
-            </div>
-
-            <button
-              id="profile-btn"
-              onClick={() => onNavigateTab('profile')}
-              className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center hover:border-[#0284C7] transition-all"
-              title="My Account"
-            >
-              <User className="w-4 h-4 text-slate-700" />
-            </button>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content Area */}
-      <main className="pt-16 flex-1 max-w-[1200px] w-full mx-auto pb-24">
+      <main className="flex-1 max-w-[1280px] w-full mx-auto pb-24 px-4 sm:px-6">
         {/* Sticky Filter Bar */}
-        <div className="px-4 pt-4 pb-2.5 sticky top-16 z-40 bg-[#F8FAFC]/95 backdrop-blur-md border-b border-slate-200/80">
+        <div className="pt-4 pb-2.5 sticky top-16 z-40 bg-[#F8FAFC]/95 backdrop-blur-md border-b border-slate-200/80 -mx-4 px-4 sm:-mx-6 sm:px-6">
           {/* Proximity Title Banner */}
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-2">

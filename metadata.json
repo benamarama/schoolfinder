@@ -2,5 +2,7 @@
   "name": "PropRadius - Singapore Property Intelligence",
   "description": "Institutional Singapore real estate platform with school proximity filters, transaction history, historical price trends, and property intelligence.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

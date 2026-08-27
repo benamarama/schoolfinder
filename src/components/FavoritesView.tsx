@@ -21,7 +21,7 @@ export const FavoritesView: React.FC<FavoritesViewProps> = ({
   const favoriteProperties = allProperties.filter((p) => favorites.includes(p.id));
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-16 pb-24 max-w-[1200px] mx-auto px-4">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-4 pb-24 max-w-[1280px] mx-auto px-4 sm:px-6">
       {/* Header */}
       <div className="flex justify-between items-center my-4 text-left">
         <div>

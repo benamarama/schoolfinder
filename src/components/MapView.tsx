@@ -117,7 +117,7 @@ export const MapView: React.FC<MapViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-16 pb-24 max-w-[1200px] mx-auto px-4">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] flex flex-col pt-4 pb-24 max-w-[1280px] mx-auto px-4 sm:px-6">
       {/* Top Search / Radius Control Card */}
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-4 text-left relative z-30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
