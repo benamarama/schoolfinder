@@ -29,7 +29,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav
       id="main-bottom-navigation"
-      className="fixed bottom-0 w-full z-40 bg-[#0A0A0A]/95 backdrop-blur-xl pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.6)] border-t border-white/10"
+      className="fixed bottom-0 w-full z-40 bg-white/95 backdrop-blur-xl pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t border-slate-200"
     >
       <div className="flex justify-between items-center h-16 px-4 max-w-[1200px] mx-auto">
         {navItems.map((item) => {
@@ -42,19 +42,19 @@ export const BottomNav: React.FC<BottomNavProps> = ({
               onClick={() => onSelectTab(item.id)}
               className={`relative flex flex-col items-center justify-center flex-1 py-1 transition-colors ${
                 isActive
-                  ? 'text-[#A68A56] font-bold'
-                  : 'text-white/40 hover:text-white/80'
+                  ? 'text-[#0284C7] font-bold'
+                  : 'text-slate-400 hover:text-slate-700'
               }`}
             >
               <div className="relative">
                 <Icon className="w-5 h-5" strokeWidth={isActive ? 2.5 : 1.8} />
                 {item.badge && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#A68A56] text-[#0A0A0A] text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-md">
+                  <span className="absolute -top-1.5 -right-2 bg-[#0284C7] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-sm">
                     {item.badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] mt-1 tracking-wider uppercase ${isActive ? 'text-[#C8AA74]' : 'text-white/40'}`}>{item.label}</span>
+              <span className={`text-[10px] mt-1 tracking-wider uppercase font-medium ${isActive ? 'text-[#0284C7]' : 'text-slate-400'}`}>{item.label}</span>
             </button>
           );
         })}

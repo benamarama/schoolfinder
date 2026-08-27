@@ -82,7 +82,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#D1D1D1] selection:bg-[#A68A56]/30 selection:text-[#FFFFFF]">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] selection:bg-[#0284C7]/20 selection:text-[#0F172A]">
       {/* If a property is selected, show Screen 1: Property Detail View */}
       {selectedProperty ? (
         <PropertyDetailView

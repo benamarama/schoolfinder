@@ -26,25 +26,25 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
   const growthRate = startPsf ? (((currentPsf - startPsf) / startPsf) * 100).toFixed(1) : '0';
 
   return (
-    <div id="historical-price-trend-card" className="bg-[#141414] rounded-2xl p-5 mb-4 border border-white/10 shadow-xl text-left">
+    <div id="historical-price-trend-card" className="bg-white rounded-2xl p-5 mb-4 border border-slate-200 shadow-sm text-left">
       <div className="flex justify-between items-center mb-3.5">
         <div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#A68A56]" />
-            <h3 className="font-serif font-semibold text-white text-base md:text-lg">Historical Price Trend</h3>
+            <TrendingUp className="w-4 h-4 text-[#0284C7]" />
+            <h3 className="font-serif font-semibold text-slate-900 text-base md:text-lg">Historical Price Trend</h3>
           </div>
-          <p className="text-xs text-white/50 mt-0.5">
-            5-Year Capital Appreciation: <span className="text-emerald-400 font-bold font-mono">+{growthRate}%</span>
+          <p className="text-xs text-slate-500 mt-0.5">
+            5-Year Capital Appreciation: <span className="text-emerald-600 font-bold font-mono">+{growthRate}%</span>
           </p>
         </div>
         
         {/* Timeframe pill selector */}
-        <div className="flex items-center bg-[#1A1A1A] rounded-lg p-0.5 border border-white/10 text-xs">
+        <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs">
           <button
             id="timeframe-5y-btn"
             onClick={() => setTimeframe('5Y')}
             className={`px-2.5 py-1 rounded-md transition-all font-medium ${
-              timeframe === '5Y' ? 'bg-[#A68A56] text-[#0A0A0A] font-bold shadow-sm' : 'text-white/60 hover:text-white'
+              timeframe === '5Y' ? 'bg-[#0F172A] text-white font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             5 Years
@@ -53,7 +53,7 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
             id="timeframe-3y-btn"
             onClick={() => setTimeframe('3Y')}
             className={`px-2.5 py-1 rounded-md transition-all font-medium ${
-              timeframe === '3Y' ? 'bg-[#A68A56] text-[#0A0A0A] font-bold shadow-sm' : 'text-white/60 hover:text-white'
+              timeframe === '3Y' ? 'bg-[#0F172A] text-white font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             3 Years
@@ -68,8 +68,8 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
           onClick={() => setMetric('psf')}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
             metric === 'psf'
-              ? 'bg-[#A68A56] text-[#0A0A0A] shadow-md'
-              : 'bg-[#1E1E1E] text-white/70 hover:bg-[#252525] border border-white/10'
+              ? 'bg-[#0F172A] text-white shadow-sm'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
           }`}
         >
           <DollarSign className="w-3.5 h-3.5" />
@@ -80,8 +80,8 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
           onClick={() => setMetric('volume')}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
             metric === 'volume'
-              ? 'bg-[#A68A56] text-[#0A0A0A] shadow-md'
-              : 'bg-[#1E1E1E] text-white/70 hover:bg-[#252525] border border-white/10'
+              ? 'bg-[#0F172A] text-white shadow-sm'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
           }`}
         >
           <BarChart3 className="w-3.5 h-3.5" />
@@ -90,28 +90,28 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
       </div>
 
       {/* Chart Canvas */}
-      <div className="h-[210px] w-full bg-[#0A0A0A]/80 rounded-xl p-2.5 border border-white/10">
+      <div className="h-[210px] w-full bg-slate-50/70 rounded-xl p-2.5 border border-slate-200">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={filteredData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorPsf" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#A68A56" stopOpacity={0.45} />
-                <stop offset="95%" stopColor="#A68A56" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#0284C7" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#0284C7" stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#C8AA74" stopOpacity={0.45} />
-                <stop offset="95%" stopColor="#C8AA74" stopOpacity={0.0} />
+                <stop offset="5%" stopColor="#6366F1" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#6366F1" stopOpacity={0.0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.06)" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0, 0, 0, 0.06)" />
             <XAxis
               dataKey="year"
-              tick={{ fontSize: 11, fill: 'rgba(255, 255, 255, 0.5)' }}
-              axisLine={{ stroke: 'rgba(255, 255, 255, 0.1)' }}
+              tick={{ fontSize: 11, fill: '#64748B' }}
+              axisLine={{ stroke: '#CBD5E1' }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: 'rgba(255, 255, 255, 0.5)' }}
+              tick={{ fontSize: 11, fill: '#64748B' }}
               axisLine={false}
               tickLine={false}
               domain={metric === 'psf' ? ['dataMin - 100', 'dataMax + 100'] : ['auto', 'auto']}
@@ -122,17 +122,17 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
                 if (active && payload && payload.length) {
                   const dataPoint = payload[0].payload as HistoricalDataPoint;
                   return (
-                    <div className="bg-[#161616] text-white p-3 rounded-xl shadow-2xl text-xs border border-[#A68A56]/40 backdrop-blur-xl">
-                      <p className="font-serif font-bold text-[#C8AA74]">{label}</p>
-                      <p className="mt-1 text-white/80">
-                        Avg PSF: <span className="font-semibold text-white font-mono">S$ {dataPoint.psf.toLocaleString()}</span>
+                    <div className="bg-white text-slate-800 p-3 rounded-xl shadow-xl text-xs border border-slate-200">
+                      <p className="font-serif font-bold text-[#0284C7]">{label}</p>
+                      <p className="mt-1 text-slate-600">
+                        Avg PSF: <span className="font-semibold text-slate-900 font-mono">S$ {dataPoint.psf.toLocaleString()}</span>
                       </p>
-                      <p className="text-white/80">
-                        Volume: <span className="font-semibold text-white">{dataPoint.volume} units</span>
+                      <p className="text-slate-600">
+                        Volume: <span className="font-semibold text-slate-900">{dataPoint.volume} units</span>
                       </p>
                       {dataPoint.avgRent && (
-                        <p className="text-white/60">
-                          Est. Rent: <span className="text-white font-mono">S$ {dataPoint.avgRent.toLocaleString()}/mo</span>
+                        <p className="text-slate-500">
+                          Est. Rent: <span className="text-slate-800 font-mono">S$ {dataPoint.avgRent.toLocaleString()}/mo</span>
                         </p>
                       )}
                     </div>
@@ -145,32 +145,32 @@ export const PriceTrendChart: React.FC<PriceTrendChartProps> = ({ data }) => {
               <Area
                 type="monotone"
                 dataKey="psf"
-                stroke="#A68A56"
+                stroke="#0284C7"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorPsf)"
-                dot={{ r: 3.5, fill: '#A68A56', strokeWidth: 1.5, stroke: '#0A0A0A' }}
-                activeDot={{ r: 6, fill: '#C8AA74', stroke: '#0A0A0A', strokeWidth: 2 }}
+                dot={{ r: 3.5, fill: '#0284C7', strokeWidth: 1.5, stroke: '#FFFFFF' }}
+                activeDot={{ r: 6, fill: '#0369A1', stroke: '#FFFFFF', strokeWidth: 2 }}
               />
             ) : (
               <Area
                 type="monotone"
                 dataKey="volume"
-                stroke="#C8AA74"
+                stroke="#6366F1"
                 strokeWidth={2.5}
                 fillOpacity={1}
                 fill="url(#colorVolume)"
-                dot={{ r: 3.5, fill: '#C8AA74', strokeWidth: 1.5, stroke: '#0A0A0A' }}
-                activeDot={{ r: 6, fill: '#A68A56', stroke: '#0A0A0A', strokeWidth: 2 }}
+                dot={{ r: 3.5, fill: '#6366F1', strokeWidth: 1.5, stroke: '#FFFFFF' }}
+                activeDot={{ r: 6, fill: '#4F46E5', stroke: '#FFFFFF', strokeWidth: 2 }}
               />
             )}
           </AreaChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="flex items-center justify-between mt-2.5 px-1 text-[11px] text-white/40">
+      <div className="flex items-center justify-between mt-2.5 px-1 text-[11px] text-slate-400">
         <span>Source: URA & HDB Real-Time Transaction Gateway</span>
-        <span className="font-semibold text-[#C8AA74] uppercase tracking-wider text-[10px]">Institutional Tier Data</span>
+        <span className="font-semibold text-[#0284C7] uppercase tracking-wider text-[10px]">Institutional Tier Data</span>
       </div>
     </div>
   );
