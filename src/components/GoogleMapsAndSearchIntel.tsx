@@ -179,16 +179,21 @@ export const GoogleMapsAndSearchIntel: React.FC<GoogleMapsAndSearchIntelProps> =
     }
   };
 
-  // Load default preset when category changes or on mount
+  // Only fetch Maps data when maps tab is active or category changes
   useEffect(() => {
-    const preset = MAPS_QUICK_PRESETS.find((p) => p.id === mapsCategory) || MAPS_QUICK_PRESETS[0];
-    fetchMapsData(preset.prompt);
-  }, [mapsCategory, schoolName, propertyTitle, coordinates.lat, coordinates.lng]);
+    if (activeTab === 'maps') {
+      const preset = MAPS_QUICK_PRESETS.find((p) => p.id === mapsCategory) || MAPS_QUICK_PRESETS[0];
+      fetchMapsData(preset.prompt);
+    }
+  }, [activeTab, mapsCategory, schoolName, propertyTitle, coordinates.lat, coordinates.lng]);
 
+  // Only fetch Search data when search tab is active
   useEffect(() => {
-    const preset = SEARCH_QUICK_PRESETS.find((p) => p.id === searchTopic) || SEARCH_QUICK_PRESETS[0];
-    fetchSearchData(preset.prompt, preset.topic);
-  }, [searchTopic, schoolName, district]);
+    if (activeTab === 'search') {
+      const preset = SEARCH_QUICK_PRESETS.find((p) => p.id === searchTopic) || SEARCH_QUICK_PRESETS[0];
+      fetchSearchData(preset.prompt, preset.topic);
+    }
+  }, [activeTab, searchTopic, schoolName, district]);
 
   const handleCustomMapsSubmit = (e: React.FormEvent) => {
     e.preventDefault();
